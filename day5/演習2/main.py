@@ -17,7 +17,8 @@ class DataLoader:
     """データロードを行うクラス"""
 
     @staticmethod
-    def load_titanic_data(path=None):
+    def load_titanic_data(
+            path="/Users/ba52z/PycharmProjects/PythonProject/lecture-ai-engineering/day5/演習2/data/Titanic.csv"):
         """Titanicデータセットを読み込む"""
         if path:
             return pd.read_csv(path)
@@ -246,7 +247,7 @@ def test_model_performance():
 
     # 推論時間の確認
     assert (
-        metrics["inference_time"] < 1.0
+            metrics["inference_time"] < 1.0
     ), f"推論時間が長すぎます: {metrics['inference_time']}秒"
 
 
