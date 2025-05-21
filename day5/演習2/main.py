@@ -18,7 +18,7 @@ class DataLoader:
 
     @staticmethod
     def load_titanic_data(
-            path="/Users/ba52z/PycharmProjects/PythonProject/lecture-ai-engineering/day5/演習2/data/Titanic.csv"):
+            path="./day5/演習2/data/Titanic.csv"):
         """Titanicデータセットを読み込む"""
         if path:
             return pd.read_csv(path)
