@@ -10,6 +10,8 @@ from sklearn.impute import SimpleImputer
 import pickle
 import time
 import great_expectations as gx
+import numpy as np
+
 
 class DataLoader:
     """データロードを行うクラス"""
@@ -246,6 +248,44 @@ def test_model_performance():
     assert (
         metrics["inference_time"] < 1.0
     ), f"推論時間が長すぎます: {metrics['inference_time']}秒"
+
+
+def test_model_time_and_accuracy():
+    """モデルの再現性を検証"""
+    # データの分割
+    data = DataLoader.load_titanic_data()
+    X, y = DataLoader.preprocess_titanic_data(data)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+
+    preprocessor = ModelTester.create_preprocessing_pipeline()
+    # 同じパラメータで２つのモデルを作成
+    model1 = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            ("classifier", RandomForestClassifier(n_estimators=100, random_state=42)),
+        ]
+    )
+
+    model2 = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            ("classifier", RandomForestClassifier(n_estimators=100, random_state=42)),
+        ]
+    )
+
+    # 学習
+    model1.fit(X_train, y_train)
+    model2.fit(X_train, y_train)
+
+    # 同じ予測結果になることを確認
+    predictions1 = model1.predict(X_test)
+    predictions2 = model2.predict(X_test)
+
+    assert np.array_equal(
+        predictions1, predictions2
+    ), "モデルの予測結果に再現性がありません"
 
 
 if __name__ == "__main__":
